@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will You Marry Me?</title>
+<style>
+  :root{
+    --blush: #f7e2e8;
+    --rose: #d94f70;
+    --deep: #6e1f38;
+    --gold: #c99a3d;
+    --cream: #fffaf6;
+    --ink: #3a1220;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    background: radial-gradient(circle at 50% 20%, var(--blush), #f2c9d4 60%, #e9a9bb 100%);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* floating hearts background */
+  .heart {
+    position: fixed;
+    bottom: -10%;
+    font-size: 24px;
+    color: rgba(217, 79, 112, 0.35);
+    animation: rise linear infinite;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @keyframes rise {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+  }
+
+  .card {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 60px 50px;
+    max-width: 560px;
+    width: 90%;
+  }
+
+  .eyebrow {
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--gold);
+    font-family: Georgia, serif;
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: 'Brush Script MT', 'Segoe Script', cursive;
+    font-size: clamp(2.6rem, 8vw, 4.5rem);
+    color: var(--deep);
+    margin: 0 0 10px 0;
+    line-height: 1.15;
+    transition: opacity 0.4s ease;
+  }
+
+  p.sub {
+    font-size: 1.05rem;
+    color: var(--ink);
+    opacity: 0.75;
+    margin: 0 0 40px 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative;
+    min-height: 70px;
+  }
+
+  button {
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
+    padding: 16px 38px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+
+  #yesBtn {
+    background: var(--deep);
+    color: var(--cream);
+    box-shadow: 0 8px 24px rgba(110, 31, 56, 0.35);
+    letter-spacing: 0.03em;
+  }
+
+  #yesBtn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 30px rgba(110, 31, 56, 0.45);
+  }
+
+  #noBtn {
+    background: transparent;
+    color: var(--deep);
+    border: 1.5px solid var(--deep);
+    position: relative;
+  }
+
+  #noBtn.dodging {
+    position: fixed;
+  }
+
+  .celebration h1 {
+    font-size: clamp(2.8rem, 9vw, 5rem);
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .ring {
+    font-size: 2.4rem;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .confetti {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 16px;
+    opacity: 0.9;
+    pointer-events: none;
+    animation: fall linear forwards;
+    z-index: 5;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110vh) rotate(360deg);
+      opacity: 0.3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .heart, .confetti { animation: none; display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="card" id="card">
+    <div class="eyebrow" id="eyebrow">A question, for you</div>
+    <span class="ring">💍</span>
+    <h1 id="question">Will you marry me?</h1>
+    <p class="sub" id="subtext">Take your time. Well, actually — there's only one right answer.</p>
+
+    <div class="btn-row">
+      <button id="yesBtn">Yes, I will</button>
+      <button id="noBtn">No</button>
+    </div>
+  </div>
+
+<script>
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const question = document.getElementById('question');
+  const subtext = document.getElementById('subtext');
+  const eyebrow = document.getElementById('eyebrow');
+  const card = document.getElementById('card');
+
+  // No button dodges the cursor
+  function dodge() {
+    noBtn.classList.add('dodging');
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+    const maxX = window.innerWidth - btnWidth - 20;
+    const maxY = window.innerHeight - btnHeight - 20;
+    const newX = Math.random() * maxX + 10;
+    const newY = Math.random() * maxY + 10;
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+  }
+
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    dodge();
+  });
+  noBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    dodge();
+  });
+
+  yesBtn.addEventListener('click', () => {
+    eyebrow.textContent = 'She said —';
+    question.textContent = 'Congratulations!';
+    subtext.textContent = "You just made me the happiest person alive. I love you. 💕";
+    noBtn.classList.add('hidden');
+    yesBtn.classList.add('hidden');
+    card.classList.add('celebration');
+    launchConfetti();
+  });
+
+  function launchConfetti() {
+    const colors = ['#d94f70', '#c99a3d', '#6e1f38', '#f7e2e8', '#ffffff'];
+    for (let i = 0; i < 120; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+      piece.style.animationDelay = (Math.random() * 1.5) + 's';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 5000);
+    }
+  }
+
+  // Floating background hearts
+  const heartSymbols = ['💗', '💕', '♥', '💞'];
+  for (let i = 0; i < 14; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.animationDuration = (Math.random() * 8 + 9) + 's';
+    h.style.animationDelay = (Math.random() * 10) + 's';
+    h.style.fontSize = (Math.random() * 16 + 16) + 'px';
+    document.body.appendChild(h);
+  }
+</script>
+
+</body>
+</html>

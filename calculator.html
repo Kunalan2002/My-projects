@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>  
+    <meta charset="UTF-8">
+    <title>My calculater</title>
+    <style>
+        body{
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           height: 100vh;
+           margin: 0;
+           background: #1e1e2f;
+           font-family: Arial, sans-serif;
+
+        }
+        .calculator{
+                background: #2b2b3d;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+         }
+         #display{
+               width: 100%;
+               height: 60px;
+               font-size: 2rem;
+               text-align: right;
+               padding: 10px;
+               margin-bottom: 15px;
+               border: none;
+               border-radius: 8px;
+               background: #12121c;
+               color: white;
+               box-sizing: border-box;
+         }
+         .buttons{
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            gap: 10px;
+         }
+         .buttons button {
+            height: 60px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 8px;
+            background: #3a3a52;
+            color: white;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+           background: #50506e;
+        }
+        .buttons button.operator {
+           background: #e0983c;
+        }
+
+        .buttons button.operator:hover {
+           background: #f2a94f;
+        }
+        .buttons button.equals{
+           background: #4caf50;
+        }
+        .buttons button.equals:hover {
+           background: #66bb6a;
+        } 
+    </style>
+
+
+</head>
+
+<body>
+    <div class="calculator">
+        <input type="text" id="display" readonly>
+        <div class="buttons">
+            <button onclick="pressNumber('7')">7</button>
+            <button onclick="pressNumber('8')">8</button>
+            <button onclick="pressNumber('9')">9</button>
+            <button onclick="pressNumber('4')">4</button>
+            <button onclick="pressNumber('5')">5</button>
+            <button onclick="pressNumber('6')">6</button>
+            <button onclick="pressNumber('1')">1</button>
+            <button onclick="pressNumber('2')">2</button>
+            <button onclick="pressNumber('3')">3</button>
+            <button onclick="pressNumber('0')">0</button>
+            <button onclick="pressNumber('.')">.</button>
+            <button onclick="clearDisplay()">c</button>
+            <button class="operator"  onclick="pressOperator('+')">+</button>
+            <button class="operator" onclick="pressOperator('-')">-</button>
+            <button class="operator" onclick="pressOperator('*')">x</button>
+            <button class="operator" onclick="pressOperator('/')">÷</button>
+            <button class="equals" onclick="calculateResult()">=</button>
+
+        </div>
+    </div>
+<script>
+    let currentInput="";
+    function pressNumber (num){
+         if (num === "." && currentInput.includes(".")) {
+                return; // already has a decimal point, ignore this click
+             }
+        currentInput=currentInput+num;
+        document.getElementById("display").value=currentInput;
+    }
+    let firstNumber=null;
+    let operator=null;
+    
+    function pressOperator(op){
+        firstNumber=parseFloat(currentInput);
+        operator=op;
+        currentInput="";
+
+    }
+    function clearDisplay(){
+        currentInput=""
+        firstNumber=null;
+        operator=null;
+        document.getElementById("display").value="";
+    }
+    function calculateResult(){
+        let secoundNumber=parseFloat(currentInput);
+        let result;
+        if (operator==="+"){
+            result=firstNumber+secoundNumber;
+
+        }
+        else if (operator==="-"){
+            result=firstNumber-secoundNumber;
+
+        }
+        else if (operator==="*"){
+            result=firstNumber*secoundNumber;
+
+        }
+        else if(operator==="/"){
+            if (secoundNumber === 0) {
+             document.getElementById("display").value = "Error";
+             currentInput = "";
+             return;
+            }
+           else{
+            result=firstNumber/secoundNumber;
+        }
+        }
+        
+        currentInput=result.toString();
+        document.getElementById("display").value=currentInput;
+    }
+    document.addEventListener("keydown",function(event){
+        const key=event.key;
+
+        if (key >= "0" && key <= "9") {
+              pressNumber(key);
+           } else if (key === ".") {
+              pressNumber(".");
+           } else if (key === "+" || key === "-" || key === "*" || key === "/") {
+              pressOperator(key);
+           } else if (key === "Enter" || key === "=") {
+              calculateResult();
+           } else if (key === "Escape" || key.toLowerCase() === "c") {
+              clearDisplay();
+           }
+
+    })
+</script>
+</body>
+</html>
